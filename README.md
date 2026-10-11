@@ -1,4 +1,4 @@
-# Odbiornik stacji meteo Garni 5, v0.2
+# Odbiornik stacji meteo Garni 5, v0.3
 
 To jest wstępna wersja programu który odbiera dane z stacji Meteo Garni 5 INT
 To jest odpowiednik stacji meteo Bresser.
