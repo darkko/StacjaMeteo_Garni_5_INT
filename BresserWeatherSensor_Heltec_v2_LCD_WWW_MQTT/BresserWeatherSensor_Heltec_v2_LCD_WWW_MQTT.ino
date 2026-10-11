@@ -6,6 +6,13 @@
 //
 //  Ostatnia modyfikacja: 2026.04.26
 //
+// Przy pierwszym uruchomieniu urządzenie ustawia Wi-Fi:
+//   WIFI_SSID     = "WeatherStation";
+//   WIFI_PASS     = "meteo123";
+// Jeśli wcześniej był wgrany i skonfigurowany program to próbuje on połączyć się do zapisanej sieci Wi_Fi
+//   jeśli nie udaje się to przez 60 sekund to wystawia AccesPoint Wi-Fi jak powyżej
+// Aby całkowicie skasować ustawienia to w ustawieniach płytki należy wybrać: "Erase All Flash Before Sketch Upload: Enable"
+//
 //  Należy w preferencjach dodać dodatkowe biblioteki (adresy URL) płytek:
 //      https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
 //  Ustawić w narzedziach płytkę: "Heltec WiFi LoRa32(v2)"
@@ -171,6 +178,11 @@
 #define SCREEN_WIDTH 128    // Szerokość wyświetlacza w pikselach
 #define SCREEN_HEIGHT 64    // Wysokość wyświetlacza w pikselach
 #define OLED_RESET 16       // Pin resetowania wyświetlacza (bardzo ważny w V2!)
+#define SCREEN_ADDRESS 0x3C // Standardowy adres I2C dla tego ekranu
+#elif defined(ARDUINO_HELTEC_WIFI_LORA_32_V3)
+#define SCREEN_WIDTH 128    // Szerokość wyświetlacza w pikselach
+#define SCREEN_HEIGHT 64    // Wysokość wyświetlacza w pikselach
+#define OLED_RESET 21       // Pin resetowania wyświetlacza (bardzo ważny w V2!)
 #define SCREEN_ADDRESS 0x3C // Standardowy adres I2C dla tego ekranu
 #else
 #pragma message("Board not supported yet!")
@@ -553,7 +565,7 @@ void mqttReconnect() {
   if (mqttClient.connected()) return;
   Serial.print(F("[MQTT] Laczenie... "));
 
-#if defined(ARDUINO_HELTEC_WIFI_LORA_32_V2)
+#if defined(ARDUINO_HELTEC_WIFI_LORA_32_V2) || (ARDUINO_HELTEC_WIFI_LORA_32_V3) || (ARDUINO_HELTEC_WIFI_LORA_32_V4)
     String clientId = "WX-" + APRS_CALLSIGN + "-" + String(ESP.getEfuseMac(), HEX);
 #elif defined(ESP8266)
     String clientId = "WX-" + APRS_CALLSIGN + "-" + String(ESP.getChipId(), HEX);
@@ -1138,6 +1150,9 @@ void setup() {
     // I2C pin configuration
     twi.begin(4, 15);
     //Wire.begin(SDA, SCL);
+#elif defined(ARDUINO_HELTEC_WIFI_LORA_32_V3)
+    // I2C pin configuration
+    twi.begin(17, 18);
 #endif
 
     // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
