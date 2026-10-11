@@ -182,7 +182,8 @@
 #elif defined(ARDUINO_HELTEC_WIFI_LORA_32_V3)
 #define SCREEN_WIDTH 128    // Szerokość wyświetlacza w pikselach
 #define SCREEN_HEIGHT 64    // Wysokość wyświetlacza w pikselach
-#define OLED_RESET 21       // Pin resetowania wyświetlacza (bardzo ważny w V2!)
+#define OLED_RESET 21       // Pin resetowania wyświetlacza
+#define OLED_PWR 36         // Pin do sterowaniem podświetlenia
 #define SCREEN_ADDRESS 0x3C // Standardowy adres I2C dla tego ekranu
 #else
 #pragma message("Board not supported yet!")
@@ -1153,6 +1154,9 @@ void setup() {
 #elif defined(ARDUINO_HELTEC_WIFI_LORA_32_V3)
     // I2C pin configuration
     twi.begin(17, 18);
+    // Załączenie pinu zasilania wyświetlacza OLED
+    pinMode(OLED_PWR, OUTPUT);
+    digitalWrite(OLED_PWR, LOW); // LOW powers on the Vext rail for Heltec V3
 #endif
 
     // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
